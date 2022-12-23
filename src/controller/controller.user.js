@@ -21,4 +21,6 @@ route.get("/:id", async (req, res) => {
     }
 })
 
+route.post()
+
 module.exports = route
