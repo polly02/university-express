@@ -14,4 +14,23 @@ async function getUserByIdDB(id) {
     return data
 }
 
-module.exports = { getUserDB, getUserByIdDB }
+async function createUserDB(name, surname, birth, city, age) {
+    const client = await pool.connect()
+    const sql = `INSERT INTO users(name, surname) VALUES ($1, $2), 
+    INSERT INTO users_info(birth, city, age) VALUES ($3, $4, $5),
+    SELECT * FROM users JOIN users_info ON users.info_id=users_info.id`
+    const data = (await client.query(sql, [name, surname, birth, city, age])).rows
+    return data
+}
+
+async function updateUserDB(id, name, surname, birth, city, age) {
+    const client = await pool.connect()
+
+}
+
+async function deleteUserDB(id) {
+    const client = await pool.connect()
+
+}
+
+module.exports = { getUserDB, getUserByIdDB, createUserDB, updateUserDB, deleteUserDB }
