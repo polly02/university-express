@@ -2,7 +2,7 @@ const express = require("express")
 const { getUser, getUserById } = require("../service/service.user")
 const route = express.Router()
 
-route.get("/", async (req, res) => {
+route.get("/", async function (req, res) {
     try {
         const user = await getUser()
         res.status(200).send(user)
@@ -11,7 +11,7 @@ route.get("/", async (req, res) => {
     }
 })
 
-route.get("/:id", async (req, res) => {
+route.get("/:id", async function (req, res) {
     try {
         const { id } = req.params
         const user = await getUserById(id)
@@ -21,6 +21,8 @@ route.get("/:id", async (req, res) => {
     }
 })
 
-route.post()
+route.post("/", async function (req, res) {
+
+})
 
 module.exports = route
