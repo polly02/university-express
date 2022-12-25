@@ -26,11 +26,15 @@ async function createUserDB(name, surname, birth, city, age) {
 async function updateUserDB(id, name, surname, birth, city, age) {
     const client = await pool.connect()
 
+    const data = (await client.query(sql, [name, surname, birth, city, age])).rows
+    return data
 }
 
 async function deleteUserDB(id) {
     const client = await pool.connect()
 
+    const data = (await client.query(sql, [name, surname, birth, city, age])).rows
+    return data
 }
 
 module.exports = { getUserDB, getUserByIdDB, createUserDB, updateUserDB, deleteUserDB }
