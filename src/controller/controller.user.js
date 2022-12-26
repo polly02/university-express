@@ -1,5 +1,5 @@
 const express = require("express")
-const { getUser, getUserById, createUser, updateUser, deleteUser } = require("../service/service.user")
+const { getUser, getUserById, createUser, updateUser, deleteUser, patchUser } = require("../service/service.user")
 const route = express.Router()
 
 route.get("/", async function (req, res) {
@@ -31,21 +31,31 @@ route.post("/", async function (req, res) {
     }
 })
 
-route.put("/:id", async function (req, res) {
+route.put("/:info_id", async function (req, res) {
     try {
-        const { id } = req.params
+        const { info_id } = req.params
         const { name, surname, birth, city, age } = req.body
-        const user = await updateUser(id, name, surname, birth, city, age)
+        const user = await updateUser(info_id, name, surname, birth, city, age)
         res.status(200).send(user)
     } catch (error) {
         res.status(500).send(error.message)
     }
 })
 
-route.delete("/:id", async function (req, res) {
+route.delete("/:info_id", async function (req, res) {
     try {
-        const { id } = req.params
-        const user = await deleteUser(id)
+        const { info_id } = req.params
+        const user = await deleteUser(info_id)
+        res.status(200).send(user)
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+})
+
+route.patch("/:info_id", async function (req, res) {
+    try {
+        const { info_id } = req.params
+        const user = await patchUser(info_id, req.body)
         res.status(200).send(user)
     } catch (error) {
         res.status(500).send(error.message)
