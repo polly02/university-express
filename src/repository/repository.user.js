@@ -1,4 +1,3 @@
-const { query } = require("express")
 const pool = require("../db")
 
 async function getUserDB() {
@@ -8,10 +7,10 @@ async function getUserDB() {
     return data
 }
 
-async function getUserByIdDB(id) {
+async function getUserByIdDB(user_id) {
     const client = await pool.connect()
     const sql = "SELECT users.id, users.name, users.surname, users_info.birth, users_info.city, users_info.age FROM users JOIN users_info ON users.info_id=users_info.id WHERE users.id = $1"
-    const data = (await client.query(sql, [id])).rows
+    const data = (await client.query(sql, [user_id])).rows
     return data
 }
 
@@ -40,19 +39,19 @@ async function createUserDB(name, surname, birth, city, age) {
     }
 }
 
-async function updateUserDB(id, name, surname, birth, city, age) {
+async function updateUserDB(info_id, name, surname, birth, city, age) {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
 
         const sql = "UPDATE users_info SET birth=$1, city=$2, age=$3 WHERE id=$4"
-        await client.query(sql, [birth, city, age, id])
+        await client.query(sql, [birth, city, age, info_id])
 
         const sql2 = "UPDATE users SET name=$1, surname=$2 WHERE id=$3"
-        await client.query(sql2, [name, surname, id])
+        await client.query(sql2, [name, surname, info_id])
 
         const sql3 = "SELECT * FROM users JOIN users_info ON users_info.id=users.info_id WHERE users.info_id = $1"
-        const data3 = (await client.query(sql3, [id])).rows
+        const data3 = (await client.query(sql3, [info_id])).rows
 
         await client.query('COMMIT')
 
@@ -64,16 +63,16 @@ async function updateUserDB(id, name, surname, birth, city, age) {
     }
 }
 
-async function deleteUserDB(id) {
+async function deleteUserDB(info_id) {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
 
         const sql = "DELETE FROM users WHERE info_id=$1"
-        await client.query(sql, [id])
+        await client.query(sql, [info_id])
 
         const sql2 = "DELETE FROM users_info WHERE id=$1 RETURNING *"
-        const data2 = (await client.query(sql2, [id])).rows
+        const data2 = (await client.query(sql2, [info_id])).rows
 
         await client.query('COMMIT')
 
@@ -85,24 +84,24 @@ async function deleteUserDB(id) {
     }
 }
 
-async function patchUserDB(id, dataFromClient) {
+async function patchUserDB(info_id, dataFromClient) {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
 
         const sql = "SELECT * FROM users JOIN users_info ON users_info.id=users.info_id WHERE users.info_id = $1"
-        const data = (await client.query(sql, [id])).rows[0]
+        const data = (await client.query(sql, [info_id])).rows[0]
 
         const mergeData = { ...data, ...dataFromClient }
 
         const sql2 = "UPDATE users SET name=$1, surname=$2 WHERE id=$3"
-        await client.query(sql2, [mergeData.name, mergeData.surname, id])
+        await client.query(sql2, [mergeData.name, mergeData.surname, info_id])
 
         const sql3 = "UPDATE users_info SET birth=$1, city=$2, age=$3 WHERE id=$4"
-        await client.query(sql3, [mergeData.birth, mergeData.city, mergeData.age, id])
+        await client.query(sql3, [mergeData.birth, mergeData.city, mergeData.age, info_id])
 
         const sql4 = "SELECT * FROM users JOIN users_info ON users_info.id=users.info_id WHERE users.info_id = $1"
-        const data4 = (await client.query(sql4, [id])).rows
+        const data4 = (await client.query(sql4, [info_id])).rows
 
         await client.query('COMMIT')
 

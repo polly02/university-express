@@ -1,64 +1,66 @@
 const express = require("express")
 const { getUser, getUserById, createUser, updateUser, deleteUser, patchUser } = require("../service/service.user")
+const { isValidInfoId, isValidUserId, isValidBody } = require("../helper/validation")
+const { buildResponse } = require("../helper/buildResponse")
 const route = express.Router()
 
 route.get("/", async function (req, res) {
     try {
         const user = await getUser()
-        res.status(200).send(user)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
-route.get("/:id", async function (req, res) {
+route.get("/:user_id", isValidUserId, async function (req, res) {
     try {
-        const { id } = req.params
-        const user = await getUserById(id)
-        res.status(200).send(user)
+        const { user_id } = req.params
+        const user = await getUserById(user_id)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
-route.post("/", async function (req, res) {
+route.post("/", isValidBody, async function (req, res) {
     try {
         const { name, surname, birth, city, age } = req.body
         const user = await createUser(name, surname, birth, city, age)
-        res.status(200).send(user)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
-route.put("/:info_id", async function (req, res) {
+route.put("/:info_id", isValidInfoId, isValidBody, async function (req, res) {
     try {
         const { info_id } = req.params
         const { name, surname, birth, city, age } = req.body
         const user = await updateUser(info_id, name, surname, birth, city, age)
-        res.status(200).send(user)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
-route.delete("/:info_id", async function (req, res) {
+route.delete("/:info_id", isValidInfoId, async function (req, res) {
     try {
         const { info_id } = req.params
         const user = await deleteUser(info_id)
-        res.status(200).send(user)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
-route.patch("/:info_id", async function (req, res) {
+route.patch("/:info_id", isValidInfoId, async function (req, res) {
     try {
         const { info_id } = req.params
         const user = await patchUser(info_id, req.body)
-        res.status(200).send(user)
+        buildResponse(res, 200, user)
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message)
     }
 })
 
