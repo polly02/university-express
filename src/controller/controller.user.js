@@ -2,6 +2,7 @@ const express = require("express")
 const { getUser, getUserById, createUser, updateUser, deleteUser, patchUser } = require("../service/service.user")
 const { isValidInfoId, isValidUserId, isValidBody } = require("../helper/validation")
 const { buildResponse } = require("../helper/buildResponse")
+
 const route = express.Router()
 
 route.get("/", async function (req, res) {
